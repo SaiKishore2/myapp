@@ -1,0 +1,1 @@
+eksctl create iamserviceaccount  --name myapp-sa  --namespace default  --cluster my-eks-cluster  --attach-policy-arn arn:aws:iam::673386412048:policy/DynamodbPolicy  --approve
