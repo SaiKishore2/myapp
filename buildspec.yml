@@ -3,8 +3,8 @@ version: 0.2
 env:
   variables:
     AWS_DEFAULT_REGION: us-east-1
-    CLUSTER_NAME: your-eks-cluster-name
-    ECR_REPO: <account-id>.dkr.ecr.us-east-1.amazonaws.com/myapp-service1
+    CLUSTER_NAME: my-eks-cluster
+    ECR_REPO: 673386412048.dkr.ecr.us-east-1.amazonaws.com/myapp-repo
 
 phases:
   pre_build:
@@ -12,22 +12,19 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo $IMAGE_TAG > imageTag.txt
   build:
     commands:
-      - docker build -t myapp-service1:$IMAGE_TAG .
-      - docker tag myapp-service1:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
+      - echo Build started `date`
+      - docker build -t myapp:$IMAGE_TAG .
+      - docker tag myapp:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
       - docker push $ECR_REPO:$IMAGE_TAG
   post_build:
     commands:
-      - sed -i "s|image:.*|image: $ECR_REPO:$IMAGE_TAG|g" deployment.yaml
+      - 'sed -i "s|image:.*|image: $ECR_REPO:$IMAGE_TAG|g" deployment.yaml'
       - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $CLUSTER_NAME
       - kubectl apply -f deployment.yaml
-      - kubectl apply -f service.yaml
-      - kubectl apply -f ingress.yaml
-      - kubectl apply -f networkpolicy.yaml
-
 artifacts:
   files:
     - deployment.yaml
     - ingress.yaml
-    - networkpolicy.yaml
