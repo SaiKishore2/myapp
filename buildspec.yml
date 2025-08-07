@@ -24,6 +24,7 @@ phases:
       - 'sed -i "s|image:.*|image: $ECR_REPO:$IMAGE_TAG|g" deployment.yaml'
       - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $CLUSTER_NAME
       - kubectl apply -f deployment.yaml
+      - kubectl apply -f ingress.yaml
 artifacts:
   files:
     - deployment.yaml
