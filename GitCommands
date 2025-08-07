@@ -1,0 +1,19 @@
+#To clone your github repository to git CodeCommit. Please follow below steps
+1. Install git and AWS CLI for the Windows
+2. Add the C:\Program Files\Git\bin  to system> Advance System Settings > Advanced > EnvironmentVariables > System variables > Path > Add path
+3. Open Cmd and run git --version and aws --version
+4. To configure AWS into your local desktop, we need to run below command
+     AWS Configure
+5. Please enter AccessKey,SecretKey,regionname and output type json
+6. Now next step, clone your github repository into local machine using below command
+     git clone https://github.com/SaiKishore2/myapp.git
+7. open the repository using below command
+      cd myapp
+8. Now need to setup creditionals to github
+    git config --global credential.helper '!aws codecommit credential-helper $@'
+    git config --global credential.UseHttpPath true
+9. Now we need to push our local repository to the AWS Code Commit
+10. Go to the CodeCommit and create a new repository with myapp
+11. Run the below commands
+     git remote add myrepos "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/myapp"
+     git push myrepos main
